@@ -23,6 +23,13 @@ public struct PuzzleBoard {
 
 final class BoardController: ObservableObject {
     @Published var board: PuzzleBoard = .init()
+    // to check if board is in right position
+    private let solved: [Int] = Array(1...15) + [0]
+    private var oneDimensionalBoard: [Int] = Array(0...15)
+    
+    init(){
+        generateBoard()
+    }
 
     func generateBoard() {
         var tempArray: [Int]
@@ -43,6 +50,7 @@ final class BoardController: ObservableObject {
                 board.grid[i][j] = tempArray[i*4 + j]
             }
         }
+        oneDimensionalBoard = tempArray
     }
 
     private func checkIfBoardIsSolvable(_ rowFromBottom: Int, _ tiles: [Int]) -> Bool {
@@ -58,6 +66,46 @@ final class BoardController: ObservableObject {
         let rowEven = (rowFromBottom % 2 == 0)
         let invEven = (invCount % 2 == 0)
         return rowEven != invEven
+    }
+    
+    func isInRightPosition(_ row: Int, _ column: Int) -> Bool{
+        
+        return solved[row*4 + column] == board.grid[row][column]
+    }
+    
+    func checkIfEdge(_ row: Int, _ column: Int) -> Bool{
+        return column == 0 || column == 3 || row == 0 || row == 3
+    }
+    func makeMove(_ row: Int, _ column: Int){
+        let tile = row*4 + column
+        let temp = oneDimensionalBoard[tile]
+        
+        if oneDimensionalBoard[tile + 4] == 0{
+            oneDimensionalBoard[tile] = 0
+            board.grid[row][column] = 0
+            oneDimensionalBoard[tile + 4] = temp
+            board.grid[row+1][column] = temp
+        }
+        
+        if oneDimensionalBoard[tile - 4]  == 0{
+            oneDimensionalBoard[tile] = 0
+            board.grid[row][column] = 0
+            oneDimensionalBoard[tile - 4] = temp
+            board.grid[row-1][column] = temp
+        }
+        
+        if oneDimensionalBoard[tile + 1] == 0{
+            oneDimensionalBoard[tile] = 0
+            board.grid[row][column] = 0
+            oneDimensionalBoard[tile + 1] = temp
+            board.grid[row][column+1] = temp
+        }
+        if oneDimensionalBoard[tile - 1] == 0{
+            oneDimensionalBoard[tile] = 0
+            board.grid[row][column] = 0
+            oneDimensionalBoard[tile - 1] = temp
+            board.grid[row][column-1] = temp
+        }
     }
     
     

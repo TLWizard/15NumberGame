@@ -6,3 +6,24 @@
 //
 
 import Foundation
+import SwiftUI
+
+struct BoardView: View {
+    
+    var body: some View {
+        
+        ZStack{
+            Rectangle().fill(Color(.red))
+                .ignoresSafeArea()
+            
+            Board()
+           
+            
+        }
+       
+    }
+}
+
+#Preview{
+    BoardView()
+}
